@@ -3,10 +3,12 @@ function test_it($text)
 {
     echo sym_amount($text);
     echo alp_amount($text);
+    echo lower_upper_amount($text);
     echo punctuation_amount($text);
     echo num_amount($text);
     echo word_amount($text);
-
+    echo sym_hashmap($text);
+    echo word_hashmap($text);
 }
 
 function sym_amount($text)
@@ -15,7 +17,7 @@ function sym_amount($text)
 }
 function alp_amount($text)
 {
-    return 'Количество символов: ' . strlen(str_replace($text, " ", "")) . '<br>';
+    return 'Количество символов: ' . strlen(str_replace(" ", "", $text)) . '<br>';
 }
 
 function lower_upper_amount($text)
@@ -30,7 +32,7 @@ function lower_upper_amount($text)
             $upper += 1;
         }
     }
-    return [$lower, $upper];
+    return "Количество строчных: $lower <br> Количество заглавных: $upper <br>";
 }
 
 function punctuation_amount($text)
@@ -44,7 +46,7 @@ function punctuation_amount($text)
         }
     }
 
-    return $amount;
+    return "Количество знаков препинания: $amount <br>";
 }
 
 function num_amount($text)
@@ -56,11 +58,12 @@ function num_amount($text)
             $amount += 1;
         }
     }
+    return "Количество цифр: $amount <br>";
 }
 
 function word_amount($text)
 {
-    return str_word_count($text, 0);
+    return "Количество слов: " . str_word_count($text, 0) . "<br>";
 }
 
 function sym_hashmap($text)
@@ -70,23 +73,36 @@ function sym_hashmap($text)
 
     for ($i = 0; $i < strlen($text); $i++) {
         if (
-            array_key_exists($text[$i], $hashmap)
+            !array_key_exists($text[$i], $hashmap)
         ) {
             $hashmap[$text[$i]] = 1;
         } else {
             $hashmap[$text[$i]] += 1;
         }
     }
-    return $hashmap;
+
+    $return = "Количество вхождений символов: <br> ";
+    foreach ($hashmap as $key => $value) {
+        $return .= $key . ": " . $value . "<br> ";
+    }
+
+    return $return;
 }
 
 function word_hashmap($text)
 {
-    $words = str_word_count($text, 1);
-    $hashmap = array();
-    foreach ($words as $word) {
-        $hashmap[$word] = substr_count($text, $word);
+    $words = str_word_count(strtolower($text), 1);
+    $wordCount = array_count_values($words);
+    $return = "Количество вхождений слов: <br> ";
+
+    uksort($wordCount, function ($a, $b) {
+        return strcasecmp($a, $b);
+    });
+
+    foreach ($wordCount as $key => $value) {
+        $return .= $key . ": " . $value . "<br> ";
     }
-    return $hashmap;
+
+    return $return;
 }
 ?>
