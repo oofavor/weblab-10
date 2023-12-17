@@ -1,23 +1,25 @@
 <?php
 function test_it($text)
 {
-    echo sym_amount($text);
-    echo alp_amount($text);
-    echo lower_upper_amount($text);
-    echo punctuation_amount($text);
-    echo num_amount($text);
-    echo word_amount($text);
-    echo sym_hashmap($text);
-    echo word_hashmap($text);
+    $res = '';
+    $res .= sym_amount($text);
+    $res .= alp_amount($text);
+    $res .= lower_upper_amount($text);
+    $res .= punctuation_amount($text);
+    $res .= num_amount($text);
+    $res .= word_amount($text);
+    $res .= sym_hashmap($text);
+    $res .= word_hashmap($text);
+    echo $res;
 }
 
 function sym_amount($text)
 {
-    return 'Количество символов: ' . strlen($text) . '<br>';
+    return 'Количество символов: ' . mb_strlen($text) . '<br>';
 }
 function alp_amount($text)
 {
-    return 'Количество символов: ' . strlen(str_replace(" ", "", $text)) . '<br>';
+    return 'Количество символов: ' . mb_strlen(str_replace(" ", "", $text)) . '<br>';
 }
 
 function lower_upper_amount($text)
@@ -25,10 +27,11 @@ function lower_upper_amount($text)
     $lower = 0;
     $upper = 0;
     for ($i = 0; $i < strlen($text); $i++) {
-        if (strtolower($text[$i]) == $text[$i]) {
+        $sym = mb_substr($text, $i, 1);
+        if (mb_strtoupper($sym) != $sym) {
             $lower += 1;
         }
-        if (strtoupper($text[$i]) == $text[$i]) {
+        if (mb_strtolower($sym) != $sym) {
             $upper += 1;
         }
     }
@@ -63,21 +66,21 @@ function num_amount($text)
 
 function word_amount($text)
 {
-    return "Количество слов: " . str_word_count($text, 0) . "<br>";
+
+    return "Количество слов: " . count(preg_split('/\s+/', trim($text))) . "<br>";
 }
 
 function sym_hashmap($text)
 {
-    $text = strtolower($text);
+    $text = mb_strtolower($text);
     $hashmap = array();
 
-    for ($i = 0; $i < strlen($text); $i++) {
-        if (
-            !array_key_exists($text[$i], $hashmap)
-        ) {
-            $hashmap[$text[$i]] = 1;
+    for ($i = 0; $i < mb_strlen($text); $i++) {
+        $sym = mb_substr($text, $i, 1);
+        if (!array_key_exists($sym, $hashmap)) {
+            $hashmap[$sym] = 1;
         } else {
-            $hashmap[$text[$i]] += 1;
+            $hashmap[$sym] += 1;
         }
     }
 
@@ -91,7 +94,8 @@ function sym_hashmap($text)
 
 function word_hashmap($text)
 {
-    $words = str_word_count(strtolower($text), 1);
+
+    $words = preg_split('/\s+/', trim(mb_strtolower($text)));
     $wordCount = array_count_values($words);
     $return = "Количество вхождений слов: <br> ";
 

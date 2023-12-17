@@ -6,24 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Глушков - Lab 10 (Variant 4)</title>
     <link rel="stylesheet" href="styles.css" />
-    <?php include("util.php") ?>
+    <?php include("util.php");
+    header("Content-Type: text/html; charset=utf-8");
+    mb_internal_encoding("UTF-8");
+    ?>
 </head>
+
 
 <body>
     <header class="header">
         <div>
+            <?php ?>
             <h1>Глушков Андрей</h1>
             <p>Group: 221-362</p>
             <p>Lab: 10 (Variant 4)</p>
         </div>
         <img class="header-logo" src="static/img/logo.png" alt="University Logo" />
+
+
     </header>
 
     <main>
         <?php
         if (isset($_POST['inputText']) && $_POST['inputText']) {
-            echo '<div class="src_text">' . $_POST['inputText'] . '</div>';
-            test_it(iconv("utf-8", "cp1251", $_POST['inputText']));
+            echo '<div class="src_text" name="inputText">'
+                . $_POST['inputText'] . '</div>';
+            $tex = $_POST['inputText'];
+            test_it($tex);
+
+            echo "
+        <form action='index.php' method='post'>
+            <input value='$tex' style='display:none' name='inputText' />
+            <button type='submit'>back</button>
+        </form>
+            ";
         } else
             echo '<div class="src_error">Нет текста для анализа</div>';
         ?>
